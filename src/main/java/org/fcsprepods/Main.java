@@ -1,12 +1,10 @@
 package org.fcsprepods;
 
-import org.checkerframework.checker.signature.qual.BinaryNameOrPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

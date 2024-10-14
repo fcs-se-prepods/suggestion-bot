@@ -25,7 +25,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
 
     @Override
     public void consume(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getChatId() != (long)botConfig.get("channel")) {
             String receivedMessage = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -71,7 +71,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
                             .builder()
                             .chatId((long) botConfig.get("channel"))
                             .parseMode(ParseMode.MARKDOWNV2)
-                            .text("Новая цитата от @" + update.getMessage().getChat().getUserName() + "\n" + dialogs.get(chatId) + "\n")
+                            .text("Новая цитата от @" + update.getMessage().getChat().getUserName() + "\n" + dialogs.get(chatId) + "\n\\#цитата")
                             .build();
                     SendMessage messageToChat = SendMessage
                             .builder()
