@@ -1,5 +1,6 @@
 package org.fcsprepods;
 
+import org.checkerframework.checker.signature.qual.BinaryNameOrPrimitiveType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class Main {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(Main.class);
-    private static Map<String, Object> config;
+    private static HashMap<String, Object> config;
 
     public static void main(String[] args) {
         config = loadConfig();
@@ -43,7 +44,7 @@ public class Main {
         }
     }
 
-    private static @Nullable Map<String, Object> loadConfig() {
+    private static @Nullable HashMap<String, Object> loadConfig() {
         File file = new File("./config.yml");
 
         if (!file.exists()) {
@@ -65,5 +66,9 @@ public class Main {
             System.out.println(ex.getMessage());
         }
         return null;
+    }
+
+    public static @NotNull Map<String, Object> getConfig() {
+        return config;
     }
 }
