@@ -1,23 +1,32 @@
 package org.fcsprepods;
 
+import com.vdurmont.emoji.EmojiManager;
 import org.fcsprepods.Util.MarkdownV2Parser;
 import org.fcsprepods.Util.MarkdownV2ParserType;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.polls.Poll;
+import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
+import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption;
+import org.telegram.telegrambots.meta.api.objects.reactions.ReactionTypeEmoji;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
     private final @NotNull HashMap<Long, String> dialogs = new HashMap<>();
 
-    private final @NotNull @SuppressWarnings("unchecked") HashMap<String, Object> botConfig = (HashMap<String, Object>) Main.getConfig().get("bot");
+    private final @NotNull
+    @SuppressWarnings("unchecked") HashMap<String, Object> botConfig = (HashMap<String, Object>) Main.getConfig().get("bot");
 
     public SuggestionBot(@NotNull String token) {
         this.telegramClient = new OkHttpTelegramClient(token);
@@ -25,7 +34,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
 
     @Override
     public void consume(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getChatId() != (long)botConfig.get("channel")) {
+        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getChatId() != (long) botConfig.get("channel")) {
             String receivedMessage = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -67,12 +76,28 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
 
             } else if (dialogs.containsKey(chatId) && !dialogs.get(chatId).isEmpty()) {
                 if (receivedMessage.equals("Да")) {
+                    List<InputPollOption> options = new ArrayList<>();
+                    options.add(InputPollOption.builder().text("Блять, я заплакал (8-10 / 10)").build());
+                    options.add(InputPollOption.builder().text("Заебись, четка (4-7 / 10)").build());
+                    options.add(InputPollOption.builder().text("Давай по новой миша, все хуйня (0-3 / 10)").build());
+
                     SendMessage messageToChannel = SendMessage
                             .builder()
                             .chatId((long) botConfig.get("channel"))
                             .parseMode(ParseMode.MARKDOWNV2)
                             .text("Новая цитата от @" + update.getMessage().getChat().getUserName() + "\n" + dialogs.get(chatId) + "\n\\#цитата")
                             .build();
+
+                    SendPoll poll = SendPoll
+                            .builder()
+                            .questionParseMode(ParseMode.MARKDOWNV2)
+                            .question("Мнение о предложении от " + update.getMessage().getChat().getUserName())
+                            .allowMultipleAnswers(false)
+                            .isAnonymous(false)
+                            .options(options)
+                            .chatId((long) botConfig.get("channel"))
+                            .build();
+
                     SendMessage messageToChat = SendMessage
                             .builder()
                             .chatId(chatId)
@@ -81,6 +106,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
                             .build();
 
                     this.sendMessage(messageToChannel);
+                    this.sendPoll(poll);
                     this.sendMessage(messageToChat);
 
                     dialogs.remove(chatId);
@@ -121,6 +147,14 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
     private void sendMessage(@NotNull SendMessage message) {
         try {
             telegramClient.execute(message);
+        } catch (TelegramApiException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void sendPoll(@NotNull SendPoll poll) {
+        try {
+            telegramClient.execute(poll);
         } catch (TelegramApiException ex) {
             System.out.println(ex.getMessage());
         }

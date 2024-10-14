@@ -19,6 +19,8 @@ dependencies {
     implementation("org.telegram:telegrambots-longpolling:${libs.versions.telegramApi.get()}")
     implementation("org.telegram:telegrambots-client:${libs.versions.telegramApi.get()}")
 
+    compileOnly("com.vdurmont:emoji-java:5.1.1")
+
     implementation("org.yaml:snakeyaml:${libs.versions.yaml.get()}")
 
     implementation("org.slf4j:slf4j-api:${libs.versions.slf4j.get()}")
