@@ -1,2 +1,2 @@
-rootProject.name = "suggetion-bot"
+rootProject.name = "suggestion-bot"
 

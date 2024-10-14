@@ -1,0 +1,5 @@
+# telegram bot configuration
+bot:
+  token:
+  # telegram channel id where suggestions will be sent
+  channel:
