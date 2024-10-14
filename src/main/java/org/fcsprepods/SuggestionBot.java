@@ -28,7 +28,20 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String receivedMessage = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-            if (receivedMessage.equals("/suggest") || receivedMessage.equals("/suggest@fcs_se_quote_book_bot")) {
+
+            if (receivedMessage.equals("/start") || receivedMessage.equals("/start@fcs_se_quote_book_bot")) {
+                String text = "*Добро пожаловать в предложку [лучшего цитатника](https://t.me/fcsseprepods) ФКН Программной Инженерии* \n\nДля отправки цитаты в предложку используй /suggest";
+
+                SendMessage message = SendMessage
+                        .builder()
+                        .parseMode(ParseMode.MARKDOWNV2)
+                        .chatId(chatId)
+                        .text(text)
+                        .build();
+
+                this.sendMessage(message);
+
+            } else if (receivedMessage.equals("/suggest") || receivedMessage.equals("/suggest@fcs_se_quote_book_bot")) {
                 dialogs.remove(chatId);
 
                 dialogs.put(chatId, "");
@@ -64,7 +77,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
                             .builder()
                             .chatId(chatId)
                             .parseMode(ParseMode.MARKDOWN)
-                            .text("Отлично! Цитата отправлена в предложку")
+                            .text("Отлично! Цитата отправлена в предложку, следи за цитатником :)")
                             .build();
 
                     this.sendMessage(messageToChannel);
@@ -76,7 +89,7 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
                             .builder()
                             .chatId(chatId)
                             .parseMode(ParseMode.MARKDOWN)
-                            .text("Хорошо, цитата не будет отправлена в предложку")
+                            .text("Отправка цитаты в предложку отменена..")
                             .build();
 
                     this.sendMessage(message);
