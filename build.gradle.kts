@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.fcsprepods"
-version = "1.0.0-release"
+version = "1.0.2-release"
 
 repositories {
     mavenCentral()
@@ -18,8 +18,6 @@ dependencies {
 
     implementation("org.telegram:telegrambots-longpolling:${libs.versions.telegramApi.get()}")
     implementation("org.telegram:telegrambots-client:${libs.versions.telegramApi.get()}")
-
-    compileOnly("com.vdurmont:emoji-java:5.1.1")
 
     implementation("org.yaml:snakeyaml:${libs.versions.yaml.get()}")
 

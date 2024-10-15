@@ -11,17 +11,37 @@ public class MarkdownV2Parser {
      * @param message message to parse
      * @return Parsed message as a quote
      */
-    public static @NotNull String parseString(@NotNull String message, @NotNull MarkdownV2ParserType type) {
+    public static @NotNull String parseString(@NotNull String message, @NotNull MarkdownV2ParserType type) throws MarkdownV2ParserException {
+        String[] symbolsToReplace = {"\\", "<", ")", "(", "[", "]", "-", "/", "+", "!", "?", "#", "@", "%", ".", ","};
+
+        if (!message.contains("#")) throw new MarkdownV2ParserException("Вы не указали автора цитаты, используя `#`!");
+
         switch (type) {
             case QUOTE -> {
-                String[] symbolsToReplace = {"<", ")", "(", "[", "]", "-", "/", "+", "!", "?", "#", "@", "%"};
                 for (String element : symbolsToReplace) {
                     message = message.replace(element, "\\" + element);
                 }
 
                 message = ">" + message.replace("\n", "\n>");
             }
+
+            case DEFAULT -> {
+
+            }
         }
+        System.out.println(message);
         return message;
+    }
+
+    public static class MarkdownV2ParserException extends Exception {
+        String message;
+        public MarkdownV2ParserException(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String getMessage() {
+            return this.message;
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.fcsprepods;
 
-import com.vdurmont.emoji.EmojiManager;
 import org.fcsprepods.Util.MarkdownV2Parser;
 import org.fcsprepods.Util.MarkdownV2ParserType;
 import org.jetbrains.annotations.NotNull;
@@ -10,10 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.polls.Poll;
-import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
 import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption;
-import org.telegram.telegrambots.meta.api.objects.reactions.ReactionTypeEmoji;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -50,6 +46,16 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
 
                 this.sendMessage(message);
 
+            } else if (receivedMessage.equals("/help")|| receivedMessage.equals("/help@fcs_se_quote_book_bot")) {
+                SendMessage message = SendMessage
+                        .builder()
+                        .parseMode(ParseMode.MARKDOWN)
+                        .text("Если у вас возникли проблемы, связанные с ботом, обращайтесь к @neverwhatlose")
+                        .chatId(update.getMessage().getChatId())
+                        .build();
+
+                this.sendMessage(message);
+
             } else if (receivedMessage.equals("/suggest") || receivedMessage.equals("/suggest@fcs_se_quote_book_bot")) {
                 dialogs.remove(chatId);
 
@@ -64,17 +70,53 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
                 this.sendMessage(message);
 
             } else if (dialogs.containsKey(chatId) && dialogs.get(chatId).isEmpty()) {
-                dialogs.put(chatId, MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE));
+                this.processSuggestion(update, ProcessSuggestionType.EMPTY);
+
+            } else if (dialogs.containsKey(chatId) && !dialogs.get(chatId).isEmpty()) {
+                this.processSuggestion(update, ProcessSuggestionType.SUBMITTED);
+
+            } else {
                 SendMessage message = SendMessage
                         .builder()
-                        .chatId(chatId)
-                        .parseMode(ParseMode.MARKDOWNV2)
-                        .text("Ваша цитата: \n" + MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE) + "\nОставляем? Напишите `Да` или `Нет`")
+                        .parseMode(ParseMode.MARKDOWN)
+                        .text("Неизвестная команда, попробуйте\n/suggest\n/start")
+                        .chatId(update.getMessage().getChatId())
                         .build();
 
                 this.sendMessage(message);
+            }
+        }
+    }
 
-            } else if (dialogs.containsKey(chatId) && !dialogs.get(chatId).isEmpty()) {
+    private void processSuggestion(@NotNull Update update, @NotNull ProcessSuggestionType type) {
+        long chatId = update.getMessage().getChatId();
+        String receivedMessage = update.getMessage().getText();
+
+        switch(type) {
+            case EMPTY -> {
+                try {
+                    dialogs.put(chatId, MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE));
+                    SendMessage message = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .parseMode(ParseMode.MARKDOWNV2)
+                            .text("Ваша цитата: \n" + MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE) + "\nОставляем? Напишите `Да` или `Нет`")
+                            .build();
+
+                    this.sendMessage(message);
+                } catch (MarkdownV2Parser.MarkdownV2ParserException ex) {
+                    SendMessage errorMessage = SendMessage
+                            .builder()
+                            .text(ex.getMessage())
+                            .chatId(chatId)
+                            .parseMode(ParseMode.MARKDOWN)
+                            .build();
+
+                    this.sendMessage(errorMessage);
+                }
+            }
+
+            case SUBMITTED -> {
                 if (receivedMessage.equals("Да")) {
                     List<InputPollOption> options = new ArrayList<>();
                     options.add(InputPollOption.builder().text("Блять, я заплакал (8-10 / 10)").build());
@@ -131,15 +173,6 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
 
                     this.sendMessage(message);
                 }
-            } else {
-                SendMessage message = SendMessage
-                        .builder()
-                        .parseMode(ParseMode.MARKDOWN)
-                        .text("Неизвестная команда, попробуйте\n/suggest\n/start")
-                        .chatId(update.getMessage().getChatId())
-                        .build();
-
-                this.sendMessage(message);
             }
         }
     }
@@ -149,6 +182,15 @@ public class SuggestionBot implements LongPollingSingleThreadUpdateConsumer {
             telegramClient.execute(message);
         } catch (TelegramApiException ex) {
             System.out.println(ex.getMessage());
+
+            SendMessage errorMessage = SendMessage
+                    .builder()
+                    .chatId(message.getChatId())
+                    .parseMode(ParseMode.MARKDOWN)
+                    .text("Возникла непредвиденная ошибка... Будем благодарны, если вы дадите нам об этом знать: /help ")
+                    .build();
+
+            this.sendMessage(errorMessage);
         }
     }
 
