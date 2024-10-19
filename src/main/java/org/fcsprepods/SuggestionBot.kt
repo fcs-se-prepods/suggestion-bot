@@ -1,9 +1,9 @@
 package org.fcsprepods
 
 import org.fcsprepods.Main.getConfig
-import org.fcsprepods.Util.MarkdownV2Parser
-import org.fcsprepods.Util.MarkdownV2Parser.MarkdownV2ParserException
-import org.fcsprepods.Util.MarkdownV2ParserType
+import org.fcsprepods.util.MarkdownV2Parser
+import org.fcsprepods.util.MarkdownV2Parser.MarkdownV2ParserException
+import org.fcsprepods.util.MarkdownV2ParserType
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer
 import org.telegram.telegrambots.meta.api.methods.ParseMode

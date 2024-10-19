@@ -1,6 +1,6 @@
-package org.fcsprepods.Util
+package org.fcsprepods.util
 
-import org.fcsprepods.Util.MarkdownV2Parser.MarkdownV2ParserException
+import org.fcsprepods.util.MarkdownV2Parser.MarkdownV2ParserException
 import java.lang.Exception
 
 /**

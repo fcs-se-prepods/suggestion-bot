@@ -1,4 +1,4 @@
-package org.fcsprepods.Util;
+package org.fcsprepods.util;
 
 public enum MarkdownV2ParserType {
     DEFAULT,
