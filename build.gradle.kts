@@ -1,6 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("java")
+    kotlin("jvm")
 }
 
 group = "org.fcsprepods"
@@ -23,6 +24,7 @@ dependencies {
 
     implementation("org.slf4j:slf4j-api:${libs.versions.slf4j.get()}")
     implementation("org.slf4j:slf4j-simple:${libs.versions.slf4j.get()}")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
@@ -39,4 +41,7 @@ tasks.jar {
 
 project.tasks.build {
     dependsOn(tasks.shadowJar)
+}
+kotlin {
+    jvmToolchain(21)
 }
