@@ -13,6 +13,7 @@ object MarkdownV2Parser {
      * @return Parsed message as a quote
      */
     @Throws(MarkdownV2ParserException::class)
+    @Deprecated("Need to be replaced with better parser")
     fun parseString(message: String, type: MarkdownV2ParserType): String {
         var message = message
         val symbolsToReplace =
@@ -36,5 +37,5 @@ object MarkdownV2Parser {
         return message
     }
 
-    class MarkdownV2ParserException(override var message: String?) : Exception()
+    class MarkdownV2ParserException(message: String??) : Exception(message)
 }

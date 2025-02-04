@@ -1,6 +1,9 @@
 package org.fcsprepods
 
 import org.fcsprepods.Main.getConfig
+import org.fcsprepods.command.HelpCommandHandler
+import org.fcsprepods.command.StartCommandHandler
+import org.fcsprepods.command.SuggestCommandHandler
 import org.fcsprepods.util.MarkdownV2Parser
 import org.fcsprepods.util.MarkdownV2Parser.MarkdownV2ParserException
 import org.fcsprepods.util.MarkdownV2ParserType
@@ -18,66 +21,29 @@ import java.util.ArrayList
 import java.util.HashMap
 
 class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
-    private val telegramClient: TelegramClient
+    val telegramClient: TelegramClient = OkHttpTelegramClient(token)
     private val dialogs = HashMap<String?, String?>()
-    private val adminCommands = HashMap<Long?, String?>()
 
+    //TODO: Make sure to make DataProcessor.kt to get config values
     private val botConfig = getConfig().get("bot") as HashMap<String?, Any?>
     var suggestionChannel: Long = botConfig.get("channel") as Long
 
-    init {
-        this.telegramClient = OkHttpTelegramClient(token)
-    }
-
     override fun consume(update: Update) {
-        if (update.hasMessage() && update.getMessage().hasText() && update.getMessage()
-                .getChatId() != suggestionChannel
-        ) {
-            val receivedMessage = update.getMessage().getText()
-            val chatId = update.getMessage().getChatId()
-            val chatName = update.getMessage().getChat().getUserName()
+        if (update.message == null || update.message.chatId == suggestionChannel) return
 
-            if (receivedMessage == "/start" || receivedMessage == "/start@fcs_se_quote_book_bot") {
-                val text =
-                    "*Добро пожаловать в предложку [лучшего цитатника](https://t.me/fcsseprepods) ФКН Программной Инженерии* \n\nДля отправки цитаты в предложку используй /suggest"
+        val receivedMessage = update.message.text
+        val chatId = update.message.chatId
+        val chatName = update.message.chat.userName
 
-                val message: SendMessage = SendMessage
-                    .builder()
-                    .parseMode(ParseMode.MARKDOWNV2)
-                    .chatId(chatId)
-                    .text(text)
-                    .build()
+        when (receivedMessage) {
+            "/start", "/start@fcs_se_quote_book_bot" -> StartCommandHandler.handleStartCommand(chatId.toString())
+            "/help", "/help@fcs_se_quote_book_bot" -> HelpCommandHandler.handleHelpCommand(chatId.toString())
+            "/suggest", "/suggest@fcs_se_quote_book_bot" -> SuggestCommandHandler.handleSuggestCommand(chatName, chatId.toString())
+            else -> {
+                if (SuggestCommandHandler.hasActiveDialog(chatName)) SuggestCommandHandler.handleSuggestion(chatName, chatId.toString())
+            }
 
-                this.sendMessage(message)
-            } else if (receivedMessage == "/help" || receivedMessage == "/help@fcs_se_quote_book_bot") {
-                val message: SendMessage = SendMessage
-                    .builder()
-                    .parseMode(ParseMode.MARKDOWN)
-                    .text("Если у вас возникли проблемы, связанные с ботом, обращайтесь к @neverwhatlose")
-                    .chatId(update.getMessage().getChatId())
-                    .build()
-
-                this.sendMessage(message)
-            } else if (receivedMessage == "/suggest" || receivedMessage == "/suggest@fcs_se_quote_book_bot") {
-                dialogs.remove(chatName)
-
-                dialogs.put(chatName, "")
-                val message: SendMessage = SendMessage
-                    .builder()
-                    .parseMode(ParseMode.MARKDOWNV2)
-                    .text("Напишите цитату в таком формате:\n>`Цитата`\n>\n>`#Автор цитаты`\nАвтором цитаты может быть не только преподаватель :\\)")
-                    .chatId(update.getMessage().getChatId())
-                    .build()
-
-                this.sendMessage(message)
-            } else if (receivedMessage == "testnwtls") {
-                val message: SendMessage = SendMessage
-                    .builder()
-                    .text(dialogs.toString())
-                    .chatId(update.getMessage().getChatId())
-                    .build()
-
-                this.sendMessage(message)
+        }
             } else if (dialogs.containsKey(chatName) && dialogs.get(chatName)!!.isEmpty()) {
                 this.processSuggestion(update, ProcessSuggestionType.EMPTY)
             } else if (dialogs.containsKey(chatName) && !dialogs.get(chatName)!!.isEmpty()) {
@@ -93,7 +59,6 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
                 this.sendMessage(message)
             }
         }
-    }
 
     private fun processSuggestion(update: Update, type: ProcessSuggestionType) {
         val chatId = update.getMessage().getChatId()
@@ -132,7 +97,7 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
             ProcessSuggestionType.SUBMITTED -> {
                 if (receivedMessage == "Да") {
                     var username = update.getMessage().getChat().getUserName()
-                    if (username == null) username = "username_is_null!"
+                    if (username == null) username = "\\username_is_null!\\"
 
                     val options: MutableList<InputPollOption?> = ArrayList<InputPollOption?>()
                     options.add(InputPollOption.builder().text("Блять, я заплакал (8-10 / 10)").build())
@@ -192,29 +157,17 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
         }
     }
 
-    private fun sendMessage(message: SendMessage) {
-        try {
-            telegramClient.execute<Message?, SendMessage?>(message)
-        } catch (ex: TelegramApiException) {
-            // Костыль
-            println(ex.message)
-
-            val errorMessage: SendMessage = SendMessage
-                .builder()
-                .chatId(message.getChatId())
-                .parseMode(ParseMode.MARKDOWN)
-                .text("Возникла непредвиденная ошибка... Будем благодарны, если вы дадите нам об этом знать: /help ")
-                .build()
-
-            this.sendMessage(errorMessage)
-        }
-    }
-
     private fun sendPoll(poll: SendPoll) {
         try {
             telegramClient.execute<Message?, SendPoll?>(poll)
         } catch (ex: TelegramApiException) {
             println(ex.message)
+        }
+    }
+
+    private class Suggestion(val message: String, val author: String) {
+        fun sendSuggestion() {
+
         }
     }
 }

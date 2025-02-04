@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.fcsprepods"
-version = "1.0.3-release"
+version = "1.0.4-release"
 
 repositories {
     mavenCentral()

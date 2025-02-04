@@ -14,7 +14,8 @@ import java.nio.file.StandardCopyOption
 object Main {
     private val LOGGER: Logger = LoggerFactory.getLogger(Main::class.java)
     private var config: HashMap<String, Any>? = null
-
+    var suggestionBot: SuggestionBot? = null
+    @JvmStatic
     fun main(args: Array<String>) {
         config = loadConfig()
         if (config == null) {
@@ -26,9 +27,12 @@ object Main {
 
         val botToken = botConfig!!["token"] as String?
 
+        // Todo: make sure that suggestionBot is not null!!!!!
         try {
+            suggestionBot = SuggestionBot(botToken!!)
+
             TelegramBotsLongPollingApplication().use { botsApplication ->
-                botsApplication.registerBot(botToken, SuggestionBot(botToken!!))
+                botsApplication.registerBot(botToken, suggestionBot)
                 println("@fcs_se_quote_book_bot successfully started!")
                 Thread.currentThread().join()
             }
