@@ -40,7 +40,7 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
             "/help", "/help@fcs_se_quote_book_bot" -> HelpCommandHandler.handleHelpCommand(chatId.toString())
             "/suggest", "/suggest@fcs_se_quote_book_bot" -> SuggestCommandHandler.handleSuggestCommand(chatName, chatId.toString())
             else -> {
-                if (SuggestCommandHandler.hasActiveDialog(chatName)) SuggestCommandHandler.handleSuggestion(chatName, chatId.toString())
+                if (SuggestCommandHandler.hasActiveDialog(chatName)) SuggestCommandHandler.handleSuggestion(chatName, chatId.toString(), receivedMessage)
             }
 
         }
