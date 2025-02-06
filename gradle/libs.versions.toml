@@ -1,4 +1,4 @@
 [versions]
-telegramApi = '7.10.0'
+telegramApi = '8.2.0'
 yaml = '2.3'
 slf4j = '2.0.16'
