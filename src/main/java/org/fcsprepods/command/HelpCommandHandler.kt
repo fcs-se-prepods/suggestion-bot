@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 object HelpCommandHandler {
-    private val suggestionBot: SuggestionBot? = Main.suggestionBot
     @JvmStatic
     fun handleHelpCommand(chatId: String) {
         val text = "Если у вас возникли проблемы, связанные с ботом, обращайтесь к @neverwhatlose"
@@ -19,6 +18,6 @@ object HelpCommandHandler {
             .chatId(chatId)
             .build()
 
-        TelegramUtils.sendMessage(suggestionBot!!.telegramClient, message)
+        TelegramUtils.sendMessage(message)
     }
 }

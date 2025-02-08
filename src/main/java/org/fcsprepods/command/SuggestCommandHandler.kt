@@ -10,8 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption
-import kotlin.collections.remove
-import kotlin.text.get
 
 object SuggestCommandHandler {
     private val suggestionBot: SuggestionBot? = Main.suggestionBot
@@ -31,7 +29,7 @@ object SuggestCommandHandler {
             .chatId(chatId)
             .build()
 
-        TelegramUtils.sendMessage(suggestionBot!!.telegramClient, message)
+        TelegramUtils.sendMessage(message)
     }
 
     @JvmStatic
@@ -53,7 +51,7 @@ object SuggestCommandHandler {
                         .build()
 
                     dialogs.put(chatName, MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE))
-                    TelegramUtils.sendMessage(suggestionBot!!.telegramClient, message)
+                    TelegramUtils.sendMessage(message)
                 } catch (ex: MarkdownV2ParserException) {
                     val errorMessage: SendMessage = SendMessage
                         .builder()
@@ -62,7 +60,7 @@ object SuggestCommandHandler {
                         .parseMode(ParseMode.MARKDOWN)
                         .build()
 
-                    TelegramUtils.sendMessage(suggestionBot!!.telegramClient, errorMessage)
+                    TelegramUtils.sendMessage(errorMessage)
                 }
             }
             else -> {
@@ -77,6 +75,7 @@ object SuggestCommandHandler {
                             .builder()
                             .chatId(suggestionBot!!.suggestionChannel)
                             .parseMode(ParseMode.MARKDOWNV2)
+                            // TODO: should be parsed)))
                             .text("Новая цитата от @" + chatName + "\n" + dialogs.get(chatName) + "\n\\#цитата")
                             .build()
 
@@ -98,12 +97,31 @@ object SuggestCommandHandler {
                             .build()
 
                         dialogs.remove(chatName)
-
-                        this.sendMessage(messageToChannel)
-                        this.sendPoll(poll)
-                        this.sendMessage(messageToChat)
+                        TelegramUtils.sendMessage(messageToChannel)
+                        TelegramUtils.sendPoll(poll)
+                        TelegramUtils.sendMessage(messageToChat)
                     }
+                    "Нет", "нет", "НЕТ", "Nth", "nth", "NTH" -> {
+                        val message: SendMessage = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .parseMode(ParseMode.MARKDOWN)
+                            .text("Жаль, что вы передумали. Отправка цитаты отменена")
+                            .build()
 
+                        dialogs.remove(chatName)
+                        TelegramUtils.sendMessage(message)
+                    }
+                    else -> {
+                        val message: SendMessage = SendMessage
+                            .builder()
+                            .chatId(chatId)
+                            .parseMode(ParseMode.MARKDOWN)
+                            .text("Напишите `Да` или `Нет`")
+                            .build()
+
+                        TelegramUtils.sendMessage(message)
+                    }
                 }
             }
         }
@@ -112,8 +130,6 @@ object SuggestCommandHandler {
     @JvmStatic
     fun hasActiveDialog(chatName: String): Boolean = dialogs.containsKey(chatName)
 
-    enum class ProcessSuggestionType {
-        EMPTY,
-        SUGGESTED
-    }
+    @JvmStatic
+    fun removeDialog(chatName: String) = dialogs.remove(chatName)
 }
