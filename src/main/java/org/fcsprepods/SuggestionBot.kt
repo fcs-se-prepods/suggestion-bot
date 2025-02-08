@@ -4,8 +4,11 @@ import org.fcsprepods.Main.getConfig
 import org.fcsprepods.command.HelpCommandHandler
 import org.fcsprepods.command.StartCommandHandler
 import org.fcsprepods.command.SuggestCommandHandler
+import org.fcsprepods.util.TelegramUtils
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer
+import org.telegram.telegrambots.meta.api.methods.ParseMode
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.generics.TelegramClient
 import java.util.HashMap
@@ -38,6 +41,18 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
                     chatId.toString(),
                     receivedMessage
                 )
+                else {
+                    val text = "Неизвестная команда. Используйте /commands для получения списка команд"
+
+                    val message: SendMessage = SendMessage
+                        .builder()
+                        .parseMode(ParseMode.MARKDOWNV2)
+                        .chatId(chatId)
+                        .text(text)
+                        .build()
+
+                    TelegramUtils.sendMessage(message)
+                }
             }
 
         }

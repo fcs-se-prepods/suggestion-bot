@@ -1,11 +1,8 @@
 package org.fcsprepods.command
 
-import org.fcsprepods.Main
-import org.fcsprepods.SuggestionBot
 import org.fcsprepods.util.TelegramUtils
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
-import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat
 
 object StartCommandHandler {
     @JvmStatic

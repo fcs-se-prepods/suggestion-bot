@@ -50,14 +50,15 @@ object TelegramUtils {
     }
 
     @JvmStatic
-    fun getChatById(chatId: String): String {
+    fun getChatById(chatId: String, providedTelegramClient: TelegramClient? = null): String {
+        val telegramClient = providedTelegramClient ?: Main.suggestionBot!!.telegramClient
         val getChat = GetChat
             .builder()
             .chatId(chatId)
             .build()
 
         try {
-            return Main.suggestionBot!!.telegramClient.execute(getChat).userName
+            return telegramClient.execute(getChat).userName
         } catch (ex: TelegramApiException) {
             println(ex.message)
         }

@@ -18,6 +18,7 @@ object HelpCommandHandler {
             .chatId(chatId)
             .build()
 
+        SuggestCommandHandler.removeDialog(TelegramUtils.getChatById(chatId))
         TelegramUtils.sendMessage(message)
     }
 }

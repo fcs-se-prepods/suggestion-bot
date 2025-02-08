@@ -17,7 +17,7 @@ object SuggestCommandHandler {
 
     @JvmStatic
     fun handleSuggestCommand(chatName: String, chatId: String) {
-        dialogs.remove(chatName)
+        removeDialog(TelegramUtils.getChatById(chatId))
         dialogs.put(chatName, "")
 
         val text = "Напишите цитату в таком формате:\n>`Цитата`\n>\n>`#Автор цитаты`\nАвтором цитаты может быть не только преподаватель :\\)"
