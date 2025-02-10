@@ -30,7 +30,6 @@ object MarkdownV2Parser {
             MarkdownV2ParserType.DEFAULT -> {
             }
         }
-        println(message)
         return message
     }
 

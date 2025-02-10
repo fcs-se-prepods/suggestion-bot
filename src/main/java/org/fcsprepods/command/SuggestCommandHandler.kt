@@ -65,7 +65,7 @@ object SuggestCommandHandler {
             }
             else -> {
                 when (receivedMessage) {
-                    "Да", "да", "ДА", "Lf", "lf", "LF" -> {
+                    "Да", "да", "ДА", "дА", "Lf", "lf", "LF", "lF" -> {
                         val options: MutableList<InputPollOption?> = ArrayList<InputPollOption?>()
                         options.add(InputPollOption.builder().text("Блять, я заплакал (8-10 / 10)").build())
                         options.add(InputPollOption.builder().text("Заебись, четка (4-7 / 10)").build())
@@ -101,7 +101,7 @@ object SuggestCommandHandler {
                         TelegramUtils.sendPoll(poll)
                         TelegramUtils.sendMessage(messageToChat)
                     }
-                    "Нет", "нет", "НЕТ", "Nth", "nth", "NTH" -> {
+                    "Нет", "нет", "НЕТ", "нЕТ", "Ytn", "ytn", "YTN", "yTN" -> {
                         val message: SendMessage = SendMessage
                             .builder()
                             .chatId(chatId)

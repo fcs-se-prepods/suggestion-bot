@@ -1,9 +1,9 @@
 package org.fcsprepods
 
-import org.fcsprepods.Application.getConfig
 import org.fcsprepods.command.HelpCommandHandler
 import org.fcsprepods.command.StartCommandHandler
 import org.fcsprepods.command.SuggestCommandHandler
+import org.fcsprepods.data.ConfigLoader
 import org.fcsprepods.util.TelegramUtils
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer
@@ -11,14 +11,10 @@ import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.generics.TelegramClient
-import java.util.HashMap
 
 class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
     val telegramClient: TelegramClient = OkHttpTelegramClient(token)
-
-    //TODO: Make sure to make DataProcessor.kt to get config values
-    private val botConfig = getConfig().get("bot") as HashMap<String?, Any?>
-    var suggestionChannel: Long = botConfig.get("channel") as Long
+    var suggestionChannel: Long = ConfigLoader.getLong("bot.channel")
 
     override fun consume(update: Update) {
         if (update.message == null || update.message.chatId == suggestionChannel) return

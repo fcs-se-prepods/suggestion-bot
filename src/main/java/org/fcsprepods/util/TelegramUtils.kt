@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient
 object TelegramUtils {
     @JvmStatic
     fun sendMessage(message: SendMessage, providedTelegramClient: TelegramClient? = null) {
-        val telegramClient = providedTelegramClient ?: Application.suggestionBot!!.telegramClient
+        val telegramClient = providedTelegramClient ?: Application.suggestionBot.telegramClient
         try {
             telegramClient.execute<Message?, SendMessage?>(message)
         } catch (ex: TelegramApiException) {

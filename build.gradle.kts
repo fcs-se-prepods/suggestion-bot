@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.fcsprepods"
-version = "1.0.4-release"
+version = "1.1.0-release"
 
 repositories {
     mavenCentral()
@@ -25,8 +25,8 @@ dependencies {
     implementation("org.slf4j:slf4j-api:${libs.versions.slf4j.get()}")
     implementation("org.slf4j:slf4j-simple:${libs.versions.slf4j.get()}")
 
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    //unused for now
+    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 tasks.test {
@@ -36,7 +36,7 @@ tasks.test {
 tasks.jar {
     manifest {
         attributes(
-            "Main-Class" to "org.fcsprepods.Main"
+            "Main-Class" to "org.fcsprepods.Application"
         )
     }
 }
@@ -44,6 +44,7 @@ tasks.jar {
 project.tasks.build {
     dependsOn(tasks.shadowJar)
 }
+
 kotlin {
     jvmToolchain(21)
 }
