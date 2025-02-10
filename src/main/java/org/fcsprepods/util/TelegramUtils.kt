@@ -1,6 +1,6 @@
 package org.fcsprepods.util
 
-import org.fcsprepods.Main
+import org.fcsprepods.Application
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChat
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient
 object TelegramUtils {
     @JvmStatic
     fun sendMessage(message: SendMessage, providedTelegramClient: TelegramClient? = null) {
-        val telegramClient = providedTelegramClient ?: Main.suggestionBot!!.telegramClient
+        val telegramClient = providedTelegramClient ?: Application.suggestionBot!!.telegramClient
         try {
             telegramClient.execute<Message?, SendMessage?>(message)
         } catch (ex: TelegramApiException) {
@@ -23,7 +23,7 @@ object TelegramUtils {
 
     @JvmStatic
     fun sendPoll(poll: SendPoll, providedTelegramClient : TelegramClient? = null) {
-        val telegramClient = providedTelegramClient ?: Main.suggestionBot!!.telegramClient
+        val telegramClient = providedTelegramClient ?: Application.suggestionBot!!.telegramClient
         try {
             telegramClient.execute<Message?, SendPoll?>(poll)
         } catch (ex: TelegramApiException) {
@@ -34,7 +34,7 @@ object TelegramUtils {
 
     @JvmStatic
     fun sendErrorMessage(chatId: String, providedTelegramClient: TelegramClient? = null) {
-        val telegramClient = providedTelegramClient ?: Main.suggestionBot!!.telegramClient
+        val telegramClient = providedTelegramClient ?: Application.suggestionBot!!.telegramClient
         val errorMessage: SendMessage = SendMessage
             .builder()
             .chatId(chatId)
@@ -51,7 +51,7 @@ object TelegramUtils {
 
     @JvmStatic
     fun getChatById(chatId: String, providedTelegramClient: TelegramClient? = null): String {
-        val telegramClient = providedTelegramClient ?: Main.suggestionBot!!.telegramClient
+        val telegramClient = providedTelegramClient ?: Application.suggestionBot!!.telegramClient
         val getChat = GetChat
             .builder()
             .chatId(chatId)

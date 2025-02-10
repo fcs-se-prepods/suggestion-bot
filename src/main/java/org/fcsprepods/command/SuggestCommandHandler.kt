@@ -1,10 +1,10 @@
 package org.fcsprepods.command
 
-import org.fcsprepods.Main
+import org.fcsprepods.Application
 import org.fcsprepods.SuggestionBot
-import org.fcsprepods.util.MarkdownV2Parser
-import org.fcsprepods.util.MarkdownV2Parser.MarkdownV2ParserException
-import org.fcsprepods.util.MarkdownV2ParserType
+import org.fcsprepods.parser.MarkdownV2Parser
+import org.fcsprepods.parser.MarkdownV2Parser.MarkdownV2ParserException
+import org.fcsprepods.parser.MarkdownV2ParserType
 import org.fcsprepods.util.TelegramUtils
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
@@ -12,7 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.polls.input.InputPollOption
 
 object SuggestCommandHandler {
-    private val suggestionBot: SuggestionBot? = Main.suggestionBot
+    private val suggestionBot: SuggestionBot? = Application.suggestionBot
     private val dialogs = HashMap<String, String>()
 
     @JvmStatic

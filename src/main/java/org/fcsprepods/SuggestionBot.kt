@@ -1,6 +1,6 @@
 package org.fcsprepods
 
-import org.fcsprepods.Main.getConfig
+import org.fcsprepods.Application.getConfig
 import org.fcsprepods.command.HelpCommandHandler
 import org.fcsprepods.command.StartCommandHandler
 import org.fcsprepods.command.SuggestCommandHandler
@@ -42,7 +42,7 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
                     receivedMessage
                 )
                 else {
-                    val text = "Неизвестная команда. Используйте /commands для получения списка команд"
+                    val text = "Неизвестная команда\\. Используйте /commands для получения списка команд"
 
                     val message: SendMessage = SendMessage
                         .builder()
