@@ -8,6 +8,8 @@ import org.fcsprepods.data.ConfigLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication
+import java.text.SimpleDateFormat
+import java.util.TimeZone
 import kotlin.system.exitProcess
 
 object Application {
@@ -22,9 +24,9 @@ object Application {
         exitProcess(0)
     }
 
-    // coroutine should be used here one day :)
     @JvmStatic
     fun runBot() = runBlocking {
+        val started = System.currentTimeMillis()
         logger.info("Starting @fcs_se_quote_book_bot...")
 
         val bot = launch(Dispatchers.IO) {
@@ -32,7 +34,6 @@ object Application {
                 botsApplication.registerBot(token, suggestionBot)
                 logger.info("Bot is running!")
 
-                // Держим корутину активной, пока бот работает
                 awaitCancellation()
             }
         }
@@ -46,7 +47,13 @@ object Application {
                         bot.cancel()
                         break
                     }
-                    "status" -> logger.info("Bot is running...") // bot's uptime
+                    "status" -> {
+                        val uptime = System.currentTimeMillis() - started
+                        val hours = (uptime / (1000 * 60 * 60)) % 24
+                        val minutes = (uptime / (1000 * 60)) % 60
+                        val seconds = (uptime / 1000) % 60
+                        logger.info("Bot is running for ${"%02d:%02d:%02d".format(hours, minutes, seconds)}")
+                    }
                     else -> logger.info("Unknown command!")
                 }
             }
