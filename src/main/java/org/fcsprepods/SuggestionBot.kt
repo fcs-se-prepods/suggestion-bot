@@ -5,9 +5,6 @@ import org.fcsprepods.command.StartCommandHandler
 import org.fcsprepods.command.SuggestCommandHandler
 import org.fcsprepods.data.ConfigLoader
 import org.fcsprepods.util.TelegramUtils
-import org.jetbrains.annotations.TestOnly
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer
 import org.telegram.telegrambots.meta.api.methods.ParseMode
@@ -16,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.generics.TelegramClient
 
 class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
-    private val logger: Logger = LoggerFactory.getLogger(SuggestionBot::class.java)
     val telegramClient: TelegramClient = OkHttpTelegramClient(token)
     var suggestionChannel: Long = ConfigLoader.getLong("bot.channel")
 
@@ -26,8 +22,6 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
         val receivedMessage = update.message.text
         val chatId = update.message.chatId
         val chatName = update.message.chat.userName
-
-        logger.info("received message: $receivedMessage")
 
         when (receivedMessage) {
             "/start", "/start@fcs_se_quote_book_bot" -> StartCommandHandler.handleStartCommand(chatId.toString())

@@ -2,9 +2,7 @@ package org.fcsprepods.command
 
 import org.fcsprepods.Application
 import org.fcsprepods.SuggestionBot
-import org.fcsprepods.parser.MarkdownV2Parser
-import org.fcsprepods.parser.MarkdownV2Parser.MarkdownV2ParserException
-import org.fcsprepods.parser.MarkdownV2ParserType
+import org.fcsprepods.parser.MarkdownParser
 import org.fcsprepods.util.TelegramUtils
 import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.polls.SendPoll
@@ -36,36 +34,34 @@ object SuggestCommandHandler {
     fun handleSuggestion(chatName: String, chatId: String, receivedMessage: String) {
         when (dialogs.get(chatName)) {
             "" ->  {
-                // TODO: Should be replaced when the parser is replaced
-                try {
+                val text = MarkdownParser.parse(receivedMessage).quote()
+
+                if (!text.contains("#")) {
                     val message: SendMessage = SendMessage
                         .builder()
                         .chatId(chatId)
-                        .parseMode(ParseMode.MARKDOWNV2)
-                        .text(
-                            "Ваша цитата: \n" + MarkdownV2Parser.parseString(
-                                receivedMessage,
-                                MarkdownV2ParserType.QUOTE
-                            ) + "\nОставляем? Напишите `Да` или `Нет`"
-                        )
-                        .build()
-
-                    dialogs.put(chatName, MarkdownV2Parser.parseString(receivedMessage, MarkdownV2ParserType.QUOTE))
-                    TelegramUtils.sendMessage(message)
-                } catch (ex: MarkdownV2ParserException) {
-                    val errorMessage: SendMessage = SendMessage
-                        .builder()
-                        .text(ex.message!!)
-                        .chatId(chatId)
                         .parseMode(ParseMode.MARKDOWN)
+                        .text("Цитата должна содержать автора. Попробуйте еще раз")
                         .build()
 
-                    TelegramUtils.sendMessage(errorMessage)
+                    TelegramUtils.sendMessage(message)
+                    return
                 }
+
+                val message: SendMessage = SendMessage
+                    .builder()
+                    .chatId(chatId)
+                    .parseMode(ParseMode.MARKDOWNV2)
+                    .text("Ваша цитата: \n$text\nОставляем? Напишите `Да` или `Нет`")
+                    .build()
+
+                dialogs.put(chatName, text)
+                TelegramUtils.sendMessage(message)
+
             }
             else -> {
-                when (receivedMessage) {
-                    "Да", "да", "ДА", "дА", "Lf", "lf", "LF", "lF" -> {
+                when (receivedMessage.lowercase().trim()) {
+                    "да", "lf" -> {
                         val options: MutableList<InputPollOption?> = ArrayList<InputPollOption?>()
                         options.add(InputPollOption.builder().text("Блять, я заплакал (8-10 / 10)").build())
                         options.add(InputPollOption.builder().text("Заебись, четка (4-7 / 10)").build())
@@ -75,8 +71,7 @@ object SuggestCommandHandler {
                             .builder()
                             .chatId(suggestionBot!!.suggestionChannel)
                             .parseMode(ParseMode.MARKDOWNV2)
-                            // TODO: should be parsed)))
-                            .text("Новая цитата от @" + chatName + "\n" + dialogs.get(chatName) + "\n\\#цитата")
+                            .text("Новая цитата от @$chatName\n$dialogs.get(chatName)\n\\#цитата")
                             .build()
 
                         val poll: SendPoll = SendPoll
@@ -101,7 +96,8 @@ object SuggestCommandHandler {
                         TelegramUtils.sendPoll(poll)
                         TelegramUtils.sendMessage(messageToChat)
                     }
-                    "Нет", "нет", "НЕТ", "нЕТ", "Ytn", "ytn", "YTN", "yTN" -> {
+
+                    "нет", "ytn" -> {
                         val message: SendMessage = SendMessage
                             .builder()
                             .chatId(chatId)
