@@ -26,7 +26,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${libs.versions.slf4j.get()}")
 
     //unused for now
-    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 tasks.test {
