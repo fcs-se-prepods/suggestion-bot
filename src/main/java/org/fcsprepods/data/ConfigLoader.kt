@@ -42,7 +42,7 @@ object ConfigLoader {
         }
     }
 
-    fun getString(path: String): String {
+    fun string(path: String): String {
         try {
             return getValue(path) as String
         } catch (ex: Exception) {
@@ -51,7 +51,7 @@ object ConfigLoader {
         }
     }
 
-    fun getLong(path: String): Long {
+    fun long(path: String): Long {
         try {
             return getValue(path) as Long
         } catch (ex: Exception) {

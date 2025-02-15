@@ -14,7 +14,7 @@ object SuggestCommandHandler {
     private val dialogs = HashMap<String, String>()
 
     @JvmStatic
-    fun handleSuggestCommand(chatName: String, chatId: String) {
+    fun handle(chatName: String, chatId: String) {
         removeDialog(TelegramUtils.getChatById(chatId))
         dialogs.put(chatName, "")
 
@@ -71,7 +71,7 @@ object SuggestCommandHandler {
                             .builder()
                             .chatId(suggestionBot!!.suggestionChannel)
                             .parseMode(ParseMode.MARKDOWNV2)
-                            .text("Новая цитата от @$chatName\n$dialogs.get(chatName)\n\\#цитата")
+                            .text("Новая цитата от @$chatName\n${dialogs.get(chatName)}\n\\#цитата")
                             .build()
 
                         val poll: SendPoll = SendPoll
@@ -123,7 +123,7 @@ object SuggestCommandHandler {
         }
     }
 
-    @JvmStatic
+
     fun hasActiveDialog(chatName: String): Boolean = dialogs.containsKey(chatName)
 
     @JvmStatic

@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 
 object StartCommandHandler {
     @JvmStatic
-    fun handleStartCommand(chatId: String) {
+    fun handle(chatId: String) {
         val text = "*Добро пожаловать в предложку [лучшего цитатника](https://t.me/fcsseprepods) ФКН Программной Инженерии* \n\nДля отправки цитаты в предложку используй /suggest"
 
         val message: SendMessage = SendMessage

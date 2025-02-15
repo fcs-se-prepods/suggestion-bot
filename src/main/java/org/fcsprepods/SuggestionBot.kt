@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient
 
 class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
     val telegramClient: TelegramClient = OkHttpTelegramClient(token)
-    var suggestionChannel: Long = ConfigLoader.getLong("bot.channel")
+    var suggestionChannel: Long = ConfigLoader.long("bot.channel")
 
     override fun consume(update: Update) {
         if (update.message == null || update.message.chatId == suggestionChannel) return

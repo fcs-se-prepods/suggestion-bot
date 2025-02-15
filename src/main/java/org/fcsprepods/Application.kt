@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
 object Application {
     private val logger: Logger = LoggerFactory.getLogger(Application::class.java)
 
-    val token: String = ConfigLoader.getString("bot.token")
+    val token: String = ConfigLoader.string("bot.token")
     val suggestionBot = SuggestionBot(token)
 
     @JvmStatic
