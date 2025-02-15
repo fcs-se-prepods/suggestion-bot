@@ -4,6 +4,7 @@ package org.fcsprepods.parser
  * Class that includes methods to parse a message (line) to be safe for Markdown V2 standard
  */
 object MarkdownParser {
+    @JvmStatic
     fun parse(input: String): Message {
         var input = input.replace("\\", "\\\"")
 

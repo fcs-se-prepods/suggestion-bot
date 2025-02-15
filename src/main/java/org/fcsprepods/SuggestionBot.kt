@@ -1,6 +1,7 @@
 package org.fcsprepods
 
 import org.fcsprepods.command.HelpCommandHandler
+import org.fcsprepods.command.SupportCommandHandler
 import org.fcsprepods.command.StartCommandHandler
 import org.fcsprepods.command.SuggestCommandHandler
 import org.fcsprepods.data.ConfigLoader
@@ -24,12 +25,10 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
         val chatName = update.message.chat.userName
 
         when (receivedMessage) {
-            "/start", "/start@fcs_se_quote_book_bot" -> StartCommandHandler.handleStartCommand(chatId.toString())
-            "/help", "/help@fcs_se_quote_book_bot" -> HelpCommandHandler.handleHelpCommand(chatId.toString())
-            "/suggest", "/suggest@fcs_se_quote_book_bot" -> SuggestCommandHandler.handleSuggestCommand(
-                chatName,
-                chatId.toString()
-            )
+            "/start", "/start@fcs_se_quote_book_bot" -> StartCommandHandler.handle(chatId.toString())
+            "/help", "/help@fcs_se_quote_book_bot" -> HelpCommandHandler.handle(chatId.toString())
+            "/suggest", "/suggest@fcs_se_quote_book_bot" -> SuggestCommandHandler.handle(chatName, chatId.toString())
+            "/support", "/support@fcs_se_quote_book_bot" -> SupportCommandHandler.handle(chatId.toString())
 
             else -> {
                 if (SuggestCommandHandler.hasActiveDialog(chatName)) SuggestCommandHandler.handleSuggestion(
@@ -38,7 +37,7 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
                     receivedMessage
                 )
                 else {
-                    val text = "Неизвестная команда\\. Используйте /commands для получения списка команд"
+                    val text = "Неизвестная команда\\. Используйте /help для получения списка команд"
 
                     val message: SendMessage = SendMessage
                         .builder()

@@ -49,7 +49,7 @@ object TelegramUtils {
             .builder()
             .chatId(chatId)
             .parseMode(ParseMode.MARKDOWN)
-            .text("Возникла непредвиденная ошибка... Будем благодарны, если вы дадите нам об этом знать: /help ")
+            .text("Возникла непредвиденная ошибка... Будем благодарны, если вы дадите нам об этом знать: /support")
             .build()
 
         try {
