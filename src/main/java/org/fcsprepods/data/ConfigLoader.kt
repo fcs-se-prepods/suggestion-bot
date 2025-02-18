@@ -23,11 +23,11 @@ object ConfigLoader {
                 // throws exception if file not found
                 logger.info("Copying default configuration fields...")
 
-                var inputStream: InputStream = this.javaClass.getResourceAsStream("/config.yml")
+                val inputStream: InputStream = this.javaClass.getResourceAsStream("/config.yml")
                     ?: error("config.yml not found in resources")
 
                 inputStream.use {
-                    Files.copy(inputStream, Path.of("/config.yml"), StandardCopyOption.REPLACE_EXISTING)
+                    Files.copy(inputStream, Path.of("./config.yml"), StandardCopyOption.REPLACE_EXISTING)
                 }
 
                 logger.info("config.yml successfully created!")

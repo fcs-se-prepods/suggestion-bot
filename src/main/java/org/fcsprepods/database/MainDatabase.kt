@@ -1,4 +1,3 @@
-package org.fcsprepods.database;
+package org.fcsprepods.database
 
-public class MainDatabase {
-}
+class MainDatabase 
