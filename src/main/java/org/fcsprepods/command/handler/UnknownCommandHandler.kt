@@ -15,7 +15,7 @@ object UnknownCommandHandler: CommandContext {
 
         if (telegramChatInfo.chatType != "private") return
 
-        val text = "Неизвестная команда\\. Используйте `/help` для получения списка команд"
+        val text = "Неизвестная команда\\. Используйте /help для получения списка команд"
 
         val message: SendMessage = SendMessage
             .builder()

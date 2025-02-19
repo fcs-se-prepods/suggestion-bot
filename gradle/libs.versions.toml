@@ -2,3 +2,4 @@
 telegramApi = '8.2.0'
 yaml = '2.3'
 slf4j = '2.0.16'
+coroutine = '1.8.1'

@@ -12,7 +12,7 @@ object HelpCommandHandler: CommandContext {
         val text = "Доступные команды:\n\n" +
             "/start - начать работу с ботом\n" +
             "/suggest - отправить цитату в предложку\n" +
-            "/help - связаться с разработчиком"
+            "/support - связаться с разработчиком"
 
         val message: SendMessage = SendMessage
             .builder()

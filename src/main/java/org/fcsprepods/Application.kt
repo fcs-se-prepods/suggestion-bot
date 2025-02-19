@@ -1,9 +1,6 @@
 package org.fcsprepods
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.fcsprepods.data.ConfigLoader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +9,6 @@ import kotlin.system.exitProcess
 
 object Application {
     private val logger: Logger = LoggerFactory.getLogger(Application::class.java)
-
     private val token: String = ConfigLoader.string("bot.token")
     val suggestionBot = SuggestionBot(token)
 
@@ -21,53 +17,50 @@ object Application {
         runBot()
     }
 
-    @JvmStatic
-    fun runBot() = runBlocking {
+    private fun runBot() = runBlocking {
         val started = System.currentTimeMillis()
         logger.info("Starting @fcs_se_quote_book_bot...")
 
-        val bot = launch(Dispatchers.IO) {
-            try {
-                TelegramBotsLongPollingApplication().use { botsApplication ->
+        supervisorScope {
+            val botScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+            val botsApplication = TelegramBotsLongPollingApplication()
+
+            val botJob = botScope.launch {
+                try {
                     botsApplication.registerBot(token, suggestionBot)
                     logger.info("Bot is running!")
-
                     awaitCancellation()
-                }
-            } catch (ex: Exception) {
-                logger.error("An error occurred while running the bot: ${ex.message}")
-            }
-        }
-
-        val consoleInput = launch {
-            while (true) {
-                logger.info("Enter command (type 'exit' to stop, 'status' to show bot's uptime): ")
-                when (readlnOrNull()?.trim()?.lowercase()) {
-                    "exit" -> {
-                        bot.cancel()
-                        stop()
-                        break
-                    }
-                    "status" -> {
-                        val uptime = System.currentTimeMillis() - started
-                        val hours = (uptime / (1000 * 60 * 60)) % 24
-                        val minutes = (uptime / (1000 * 60)) % 60
-                        val seconds = (uptime / 1000) % 60
-                        logger.info("Bot is running for ${"%02d:%02d:%02d".format(hours, minutes, seconds)}")
-                    }
-                    else -> logger.warn("Unknown command!")
+                } catch (ex: Exception) {
+                    logger.error("An error occurred while running the bot: ${ex.message}", ex)
                 }
             }
+
+            val consoleJob = launch(Dispatchers.IO) {
+                while (isActive) {
+                    logger.info("Enter command (type 'exit' to stop, 'status' to show bot's uptime): ")
+                    when (readlnOrNull()?.trim()?.lowercase()) {
+                        "exit" -> {
+                            logger.info("Stopping bot...")
+                            botScope.cancel()
+                            botsApplication.unregisterBot(token)
+                            botsApplication.close()
+                            exitProcess(0)
+                        }
+                        "status" -> {
+                            val uptime = System.currentTimeMillis() - started
+                            val hours = (uptime / (1000 * 60 * 60))
+                            val minutes = (uptime / (1000 * 60)) % 60
+                            val seconds = (uptime / 1000) % 60
+                            logger.info("Bot is running for ${"%02d:%02d:%02d".format(hours, minutes, seconds)}")
+                        }
+                        else -> logger.warn("Unknown command!")
+                    }
+                }
+            }
+
+            botJob.join()
+            consoleJob.cancelAndJoin()
         }
-
-        bot.join()
-        consoleInput.cancel()
-    }
-
-    // Todo: finish all processes and stop the bot
-    @JvmStatic
-    fun stop() {
-        logger.info("Stopping bot...")
-        exitProcess(0)
     }
 }

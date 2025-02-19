@@ -4,12 +4,8 @@ plugins {
     kotlin("jvm")
 }
 
-group = "org.fcsprepods"
-version = "1.1.0-release"
-
 repositories {
     mavenCentral()
-
     maven("https://repo.dmulloy2.net/repository/public/")
 }
 
@@ -25,12 +21,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:${libs.versions.slf4j.get()}")
     implementation("org.slf4j:slf4j-simple:${libs.versions.slf4j.get()}")
 
-    //unused for now
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-}
-
-tasks.test {
-    useJUnitPlatform()
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutine.get()}")
 }
 
 tasks.jar {
@@ -41,8 +32,44 @@ tasks.jar {
     }
 }
 
-project.tasks.build {
-    dependsOn(tasks.shadowJar)
+group = "org.fcsprepods"
+version = "1.1.4"
+var buildEnv = "release"
+
+tasks.register("buildRelease") {
+    group = "build"
+    description = "Builds the Release version"
+    doFirst {
+        buildEnv = "release"
+    }
+    finalizedBy(tasks.shadowJar)
+}
+
+tasks.register("buildExperimental") {
+    group = "build"
+    description = "Builds the Experimental version"
+    doFirst {
+        buildEnv = "experimental"
+    }
+    finalizedBy(tasks.shadowJar)
+}
+
+tasks.register("buildStaging") {
+    group = "build"
+    description = "Builds the Staging version"
+    doFirst {
+        buildEnv = "staging"
+    }
+    finalizedBy(tasks.shadowJar)
+}
+
+tasks.shadowJar {
+    archiveBaseName.set("suggestion-bot")
+    archiveVersion.set("v$version")
+    doFirst {
+        archiveClassifier.set(buildEnv)
+    }
+    outputs.upToDateWhen { false }
 }
 
 kotlin {

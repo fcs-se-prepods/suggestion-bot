@@ -11,10 +11,8 @@ class SuggestionBot(token: String) : LongPollingSingleThreadUpdateConsumer {
     val telegramClient: TelegramClient = OkHttpTelegramClient(token)
 
     override fun consume(update: Update) {
-        if (update.message.text == null || update.message.chat.type.lowercase().trim() == "group") return
+        if (update.message == null || update.message.text == null || update.message.chat.type.lowercase().trim() == "group") return
         val telegramChatInfo = TelegramChatInfo(update)
-
-        println(telegramChatInfo)
 
         CommandRoute.fromAlias(telegramChatInfo.message).context.execute(telegramChatInfo)
     }

@@ -17,7 +17,6 @@ object StartCommandHandler : CommandContext {
             .text(text)
             .build()
 
-        // ig it should check if return value of getChatById is empty string
         SuggestCommandHandler.activeDialogStore.removeDialog(telegramChatInfo.chatId)
         TelegramUtils.sendMessage(message)
     }
