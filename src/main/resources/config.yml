@@ -1,8 +1,8 @@
 # telegram bot configuration
 bot:
+  # telegram token
   token:
-  # telegram channel id where suggestions will be sent
-  channel:
-
-# ...
-main-database:
+  # telegram channel id where suggestions will be sent (starts with -100)
+  suggestions-channel:
+  # telegram channel id where logs and exceptions will be sent (starts with -100)
+  exceptions-channel:

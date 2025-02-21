@@ -29,7 +29,6 @@ object TelegramUtils {
         }
     }
 
-    @JvmStatic
     fun sendPoll(poll: SendPoll, providedTelegramClient : TelegramClient? = null) {
         val telegramClient = providedTelegramClient ?: Application.suggestionBot.telegramClient
         try {
@@ -40,7 +39,6 @@ object TelegramUtils {
         }
     }
 
-    @JvmStatic
     fun sendErrorMessage(chatId: String, providedTelegramClient: TelegramClient? = null) {
         val telegramClient = providedTelegramClient ?: Application.suggestionBot.telegramClient
         val errorMessage: SendMessage = SendMessage
