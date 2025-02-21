@@ -1,6 +1,5 @@
 package org.fcsprepods.command.handler
 
-import okhttp3.internal.notify
 import org.fcsprepods.wrapper.TelegramChatInfo
 import org.fcsprepods.command.CommandContext
 import org.fcsprepods.command.CommandRoute

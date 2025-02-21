@@ -38,10 +38,6 @@ object MarkdownParser {
         CODE_BLOCK {
             override fun apply(text: String) = "```\n$text\n```"
             override fun apply(text: String, lang: String) = "```${lang}\n${text}\n```"
-        },
-
-        INLINE_CODE {
-            override fun apply(text: String) = "`$text`"
         };
 
         abstract fun apply(text: String): String
