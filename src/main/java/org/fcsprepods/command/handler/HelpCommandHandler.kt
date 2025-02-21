@@ -17,7 +17,7 @@ object HelpCommandHandler: CommandContext {
         val message: SendMessage = SendMessage
             .builder()
             .parseMode(ParseMode.MARKDOWNV2)
-            .text(MarkdownParser.parse((text)).string())
+            .text(MarkdownParser.parse(text, MarkdownParser.Format.PLAIN))
             .chatId(telegramChatInfo.chatId)
             .build()
 

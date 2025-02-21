@@ -39,7 +39,7 @@ object TelegramUtils {
         }
     }
 
-    fun sendErrorMessage(chatId: String, providedTelegramClient: TelegramClient? = null) {
+    private fun sendErrorMessage(chatId: String, providedTelegramClient: TelegramClient? = null) {
         val telegramClient = providedTelegramClient ?: Application.suggestionBot.telegramClient
         val errorMessage: SendMessage = SendMessage
             .builder()

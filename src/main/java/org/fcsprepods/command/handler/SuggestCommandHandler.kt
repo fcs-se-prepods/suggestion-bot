@@ -1,5 +1,6 @@
 package org.fcsprepods.command.handler
 
+import okhttp3.internal.notify
 import org.fcsprepods.wrapper.TelegramChatInfo
 import org.fcsprepods.command.CommandContext
 import org.fcsprepods.command.CommandRoute
@@ -37,7 +38,7 @@ object SuggestCommandHandler: CommandContext {
             activeDialogStore.getDialog(telegramChatInfo.userId)?.message in CommandRoute.SUGGEST.aliases
             && activeDialogStore.getDialog(telegramChatInfo.userId)?.chatId == telegramChatInfo.chatId
             ) {
-            val text = MarkdownParser.parse(telegramChatInfo.message).quote()
+            val text = MarkdownParser.parse(telegramChatInfo.message, MarkdownParser.Format.QUOTE)
 
             if (!text.contains("#")) {
                 val message: SendMessage = SendMessage
@@ -76,7 +77,7 @@ object SuggestCommandHandler: CommandContext {
                         .parseMode(ParseMode.MARKDOWNV2)
                         .text(
                             "Новая цитата от @${telegramChatInfo.userName}\n" +
-                                    MarkdownParser.parse(activeDialogStore.getDialog(telegramChatInfo.userId)?.message!!).quote() +
+                                    MarkdownParser.parse(activeDialogStore.getDialog(telegramChatInfo.userId)?.message!!, MarkdownParser.Format.QUOTE) +
                                     "\n\\#цитата"
                         )
                         .build()

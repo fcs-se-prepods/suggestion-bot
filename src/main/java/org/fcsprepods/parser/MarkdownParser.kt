@@ -4,23 +4,49 @@ package org.fcsprepods.parser
  * Class that includes methods to parse a message (line) to be safe for Markdown V2 standard
  */
 object MarkdownParser {
-    fun parse(input: String): Message {
-        var input = input.replace("\\", "\\\"")
+    private val symbols = setOf('_', '*', '[', ']', '(', ')', '~', '>', '`', '#', '+', '-', '=', '|', '{', '}', '.', '!')
 
-        val symbols = arrayOf("_", "*", "[", "]", "(", ")", "~", ">", "`", "#", "+", "-", "=", "|", "{", "}", ".", "!")
-        for (element in symbols) {
-            input = input
-                .replace("\\$element", "ALREADY_PARSED_ELEMENT")
-                .replace(element, "\\" + element)
-                .replace("ALREADY_PARSED_ELEMENT", "\\" + element)
+    fun parse(input: String, format: Format, lang: String? = null): String {
+        val escapedText = buildString {
+            input.forEachIndexed { index, char ->
+                if (char in symbols) {
+                    if (index == 0 || input[index - 1] != '\\') {
+                        append("\\")
+                    }
+                }
+                append(char)
+            }
         }
 
-        return Message(input)
+        return if (format == Format.CODE_BLOCK && lang != null) {
+            format.apply(escapedText, lang)
+        } else {
+            format.apply(escapedText)
+        }
     }
 
-    class Message(var text: String) {
-        fun quote(): String = ">" + this.text.replace("\n", "\n>")
-        fun codeBlock(lang: String): String = "```${lang}\n${text}```"
-        fun string(): String = this.text
+    enum class Format {
+        PLAIN {
+            override fun apply(text: String) = text
+        },
+
+        QUOTE {
+            override fun apply(text: String) =
+                text.lines().joinToString("\n>") { ">$it" }
+        },
+
+        CODE_BLOCK {
+            override fun apply(text: String) = "```\n$text\n```"
+            override fun apply(text: String, lang: String) = "```${lang}\n${text}\n```"
+        },
+
+        INLINE_CODE {
+            override fun apply(text: String) = "`$text`"
+        };
+
+        abstract fun apply(text: String): String
+        open fun apply(text: String, lang: String): String {
+            throw UnsupportedOperationException("This format does not support a language parameter.")
+        }
     }
 }
