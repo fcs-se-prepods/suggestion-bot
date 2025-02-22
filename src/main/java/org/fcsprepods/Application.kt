@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 
 object Application {
     private val logger: Logger = LoggerFactory.getLogger(Application::class.java)
-    private val token: String = ConfigLoader.string("bot.token")
+    private val token: String = ConfigLoader.get<String>("bot.token")
     val suggestionBot = SuggestionBot(token)
 
     @JvmStatic

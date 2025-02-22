@@ -72,7 +72,7 @@ object SuggestCommandHandler: CommandContext {
 
                     val messageToChannel: SendMessage = SendMessage
                         .builder()
-                        .chatId(ConfigLoader.long("bot.suggestions-channel"))
+                        .chatId(ConfigLoader.get<Long>("bot.suggestions-channel"))
                         .parseMode(ParseMode.MARKDOWNV2)
                         .text(
                             "Новая цитата от @${telegramChatInfo.userName}\n" +
@@ -88,7 +88,7 @@ object SuggestCommandHandler: CommandContext {
                         .allowMultipleAnswers(false)
                         .isAnonymous(false)
                         .options(options)
-                        .chatId(ConfigLoader.long("bot.suggestions-channel"))
+                        .chatId(ConfigLoader.get<Long>("bot.suggestions-channel"))
                         .build()
 
                     val messageToChat: SendMessage = SendMessage
