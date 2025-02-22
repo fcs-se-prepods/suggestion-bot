@@ -37,7 +37,7 @@ object SuggestCommandHandler: CommandContext {
             activeDialogStore.getDialog(telegramChatInfo.userId)?.message in CommandRoute.SUGGEST.aliases
             && activeDialogStore.getDialog(telegramChatInfo.userId)?.chatId == telegramChatInfo.chatId
             ) {
-            val text = MarkdownParser.parse(telegramChatInfo.message).quote()
+            val text = MarkdownParser.parse(telegramChatInfo.message, MarkdownParser.Format.QUOTE)
 
             if (!text.contains("#")) {
                 val message: SendMessage = SendMessage
@@ -72,11 +72,11 @@ object SuggestCommandHandler: CommandContext {
 
                     val messageToChannel: SendMessage = SendMessage
                         .builder()
-                        .chatId(ConfigLoader.long("bot.channel"))
+                        .chatId(ConfigLoader.get<Long>("bot.suggestions-channel"))
                         .parseMode(ParseMode.MARKDOWNV2)
                         .text(
                             "Новая цитата от @${telegramChatInfo.userName}\n" +
-                                    MarkdownParser.parse(activeDialogStore.getDialog(telegramChatInfo.userId)?.message!!).quote() +
+                                    MarkdownParser.parse(activeDialogStore.getDialog(telegramChatInfo.userId)?.message!!, MarkdownParser.Format.QUOTE) +
                                     "\n\\#цитата"
                         )
                         .build()
@@ -88,7 +88,7 @@ object SuggestCommandHandler: CommandContext {
                         .allowMultipleAnswers(false)
                         .isAnonymous(false)
                         .options(options)
-                        .chatId(ConfigLoader.long("bot.channel"))
+                        .chatId(ConfigLoader.get<Long>("bot.suggestions-channel"))
                         .build()
 
                     val messageToChat: SendMessage = SendMessage

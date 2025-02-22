@@ -2,12 +2,12 @@ package org.fcsprepods.command
 
 import org.fcsprepods.command.handler.*
 
-enum class CommandRoute(vararg val aliases: String, val context: CommandContext) {
-    START("/start", "/start@fcs_se_quote_book_bot", context = StartCommandHandler),
-    HELP("/help", "/help@fcs_se_quote_book_bot", context = HelpCommandHandler),
-    SUGGEST("/suggest", "/suggest@fcs_se_quote_book_bot", context = SuggestCommandHandler),
-    SUPPORT("/support", "/support@fcs_se_quote_book_bot", context = SupportCommandHandler),
-    UNKNOWN(context = UnknownCommandHandler);
+enum class CommandRoute(val aliases: Set<String>, val context: CommandContext) {
+    START(setOf("/start", "/start@fcs_se_quote_book_bot"), context = StartCommandHandler),
+    HELP(setOf("/help", "/help@fcs_se_quote_book_bot"), context = HelpCommandHandler),
+    SUGGEST(setOf("/suggest", "/suggest@fcs_se_quote_book_bot"), context = SuggestCommandHandler),
+    SUPPORT(setOf("/support", "/support@fcs_se_quote_book_bot"), context = SupportCommandHandler),
+    UNKNOWN(emptySet(), context = UnknownCommandHandler);
 
     companion object {
         fun fromAlias(alias: String): CommandRoute {

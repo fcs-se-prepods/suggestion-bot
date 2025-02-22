@@ -10,12 +10,27 @@ data class TelegramChatInfo(
     val chatType: String,
     val message: String
 ) {
-    constructor(update: Update) : this(
-        userId = update.message.from.id.toString(),
-        userName = update.message.from.userName ?: update.message.from.firstName,
-        chatId = update.message.chatId.toString(),
-        chatName = update.message.chat.userName ?: update.message.chat.title,
-        chatType = update.message.chat.type,
-        message = update.message.text
+    constructor(update: Update?) : this(
+        userId = update?.message?.from?.id?.toString() ?: "unknown",
+        userName = update?.message?.from?.userName ?: update?.message?.from?.firstName ?: "unknown",
+        chatId = update?.message?.chatId?.toString() ?: "unknown",
+        chatName = update?.message?.chat?.userName ?: update?.message?.chat?.title ?: "unknown",
+        chatType = update?.message?.chat?.type ?: "unknown",
+        message = update?.message?.text ?: "unknown"
     )
+
+    override fun toString(): String {
+        return "TelegramChatInfo {\n" +
+                "    userId='$userId',\n" +
+                "    userName='$userName',\n" +
+                "    chatId='$chatId',\n" +
+                "    chatName='$chatName',\n" +
+                "    chatType='$chatType',\n" +
+                "    message='$message'\n" +
+                "}"
+    }
+
+    companion object {
+        fun fallback() = TelegramChatInfo(update = null)
+    }
 }
