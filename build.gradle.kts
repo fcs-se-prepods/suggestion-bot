@@ -33,7 +33,7 @@ tasks.jar {
 }
 
 group = "org.fcsprepods"
-version = "1.1.4"
+version = "1.1.5"
 var buildEnv = "release"
 
 tasks.register("buildRelease") {

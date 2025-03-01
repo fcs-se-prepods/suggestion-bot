@@ -38,6 +38,7 @@ object ConfigLoader {
         if (value is T) value else default ?: throw IllegalStateException("Value at path $path is not of type ${T::class.simpleName} or does not exist")
     }.getOrElse {
         logger.error("An error occurred while getting value at path $path: ${it.message}")
+        LogManager.log(it, "An error occurred while getting value at path $path: ${it.message}")
         default ?: null as T
     }
 }
