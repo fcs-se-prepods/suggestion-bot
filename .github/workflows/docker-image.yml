@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Add permissions
+        uses: chmod +x gradlew
+
       - name: Check out the repository
         uses: actions/checkout@v3
 
